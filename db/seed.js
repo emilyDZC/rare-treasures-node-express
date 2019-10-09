@@ -1,5 +1,5 @@
 const data = require('./data');
-const { mapOwners } = require('../utils/map-owners');
+const { mapItems } = require('../utils/map-items');
 
 exports.seed = function(connection, Promise) {
   return connection
@@ -7,7 +7,32 @@ exports.seed = function(connection, Promise) {
     .into('owners')
     .returning('*')
     .then(insertedOwners => {
-      console.log(data.shopData);
-      console.log(mapOwners(insertedOwners, data.shopData));
+      const shops = mapItems(
+        insertedOwners,
+        data.shopData,
+        'owner_id',
+        'forename',
+        'owner'
+      );
+      return connection
+        .insert(shops)
+        .into('shops')
+        .returning('*');
+    })
+    .then(shops => {
+      const treasures = mapItems(
+        shops,
+        data.treasureData,
+        'shop_id',
+        'shop_name',
+        'shop'
+      );
+      return connection
+        .insert(treasures)
+        .into('treasures')
+        .returning('*');
+    })
+    .then(treasures => {
+      // console.log(treasures);
     });
 };
