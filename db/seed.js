@@ -7,7 +7,7 @@ exports.seed = function(connection, Promise) {
     .into('owners')
     .returning('*')
     .then(insertedOwners => {
-      // console.log(insertedOwners);
-      console.log(mapOwners(insertedOwners));
+      console.log(data.shopData);
+      console.log(mapOwners(insertedOwners, data.shopData));
     });
 };
