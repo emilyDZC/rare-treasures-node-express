@@ -1,183 +1,239 @@
-process.env.NODE_ENV = "test";
+process.env.NODE_ENV = 'test';
 
-const chai = require("chai");
+const chai = require('chai');
 const { expect } = chai;
-const { mapItems } = require("../utils/map-items");
-const request = require("supertest");
-const { app } = require("../app");
-const chai_sorted = require("chai-sorted");
+const { mapItems } = require('../utils/map-items');
+const request = require('supertest');
+const { app } = require('../app');
+const chai_sorted = require('chai-sorted');
 chai.use(chai_sorted);
 
-describe("util functions", () => {
-  describe("mapItems", () => {
-    it("returns an empty array when given an empty array", () => {
+describe('util functions', () => {
+  describe('mapItems', () => {
+    it('returns an empty array when given an empty array', () => {
       expect(mapItems([])).to.eql([]);
     });
-    it("returns one object in an array with the owner name changed to id, when passed one object", () => {
+    it('returns one object in an array with the owner name changed to id, when passed one object', () => {
       const shopData = [
-        { shop_name: "shop-b", owner: "firstname-b", slogan: "slogan-b" }
+        { shop_name: 'shop-b', owner: 'firstname-b', slogan: 'slogan-b' }
       ];
-      const ownerData = [{ owner_id: "1", forename: "firstname-b" }];
+      const ownerData = [{ owner_id: '1', forename: 'firstname-b' }];
       const output = [
-        { shop_name: "shop-b", slogan: "slogan-b", owner_id: "1" }
+        { shop_name: 'shop-b', slogan: 'slogan-b', owner_id: '1' }
       ];
       expect(
-        mapItems(ownerData, shopData, "owner_id", "forename", "owner")
+        mapItems(ownerData, shopData, 'owner_id', 'forename', 'owner')
       ).to.eql(output);
     });
-    it("returns an array of objects when given multiple objects", () => {
+    it('returns an array of objects when given multiple objects', () => {
       const shopData = [
-        { shop_name: "shop-b", owner: "firstname-b" },
+        { shop_name: 'shop-b', owner: 'firstname-b' },
         {
-          shop_name: "shop-c",
-          owner: "firstname-c"
+          shop_name: 'shop-c',
+          owner: 'firstname-c'
         }
       ];
       const ownerData = [
-        { owner_id: "1", forename: "firstname-b" },
-        { owner_id: "2", forename: "firstname-c" }
+        { owner_id: '1', forename: 'firstname-b' },
+        { owner_id: '2', forename: 'firstname-c' }
       ];
       const output = [
-        { shop_name: "shop-b", owner_id: "1" },
-        { shop_name: "shop-c", owner_id: "2" }
+        { shop_name: 'shop-b', owner_id: '1' },
+        { shop_name: 'shop-c', owner_id: '2' }
       ];
       expect(
-        mapItems(ownerData, shopData, "owner_id", "forename", "owner")
+        mapItems(ownerData, shopData, 'owner_id', 'forename', 'owner')
       ).to.eql(output);
     });
-    it("works for objects other than shops", () => {
+    it('works for objects other than shops', () => {
       const treasures = [
-        { treasure_name: "treasure-b", shop: "shop-b", treasure_weight: "400" },
+        { treasure_name: 'treasure-b', shop: 'shop-b', treasure_weight: '400' },
         {
-          treasure_name: "treasure-c",
-          shop: "shop-c"
+          treasure_name: 'treasure-c',
+          shop: 'shop-c'
         }
       ];
       const shops = [
-        { shop_id: "1", shop_name: "shop-b", shop_type: "butcher" },
-        { shop_id: "2", shop_name: "shop-c" }
+        { shop_id: '1', shop_name: 'shop-b', shop_type: 'butcher' },
+        { shop_id: '2', shop_name: 'shop-c' }
       ];
       const output = [
-        { treasure_name: "treasure-b", shop_id: "1", treasure_weight: "400" },
-        { treasure_name: "treasure-c", shop_id: "2" }
+        { treasure_name: 'treasure-b', shop_id: '1', treasure_weight: '400' },
+        { treasure_name: 'treasure-c', shop_id: '2' }
       ];
-      expect(mapItems(shops, treasures, "shop_id", "shop_name", "shop")).to.eql(
+      expect(mapItems(shops, treasures, 'shop_id', 'shop_name', 'shop')).to.eql(
         output
       );
     });
-    it("should not mutate the original data", () => {
+    it('should not mutate the original data', () => {
       const treasures = [
-        { treasure_name: "treasure-b", shop: "shop-b", treasure_weight: "400" },
+        { treasure_name: 'treasure-b', shop: 'shop-b', treasure_weight: '400' },
         {
-          treasure_name: "treasure-c",
-          shop: "shop-c"
+          treasure_name: 'treasure-c',
+          shop: 'shop-c'
         }
       ];
       const shops = [
-        { shop_id: "1", shop_name: "shop-b", shop_type: "butcher" },
-        { shop_id: "2", shop_name: "shop-c" }
+        { shop_id: '1', shop_name: 'shop-b', shop_type: 'butcher' },
+        { shop_id: '2', shop_name: 'shop-c' }
       ];
-      mapItems(shops, treasures, "shop_id", "shop_name", "shop");
+      mapItems(shops, treasures, 'shop_id', 'shop_name', 'shop');
 
       expect(treasures).to.eql([
-        { treasure_name: "treasure-b", shop: "shop-b", treasure_weight: "400" },
+        { treasure_name: 'treasure-b', shop: 'shop-b', treasure_weight: '400' },
         {
-          treasure_name: "treasure-c",
-          shop: "shop-c"
+          treasure_name: 'treasure-c',
+          shop: 'shop-c'
         }
       ]);
     });
   });
 });
-describe("endpoints", () => {
-  it("Status 404: path not found for invalid path", () => {
+describe('endpoints', () => {
+  it('Status 404: path not found for invalid path', () => {
     return request(app)
-      .get("/api/sdfsdf")
+      .get('/api/sdfsdf')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).to.equal("Route not found");
+        expect(body.msg).to.equal('Route not found');
       });
   });
-  describe("/api", () => {
-    describe("/treasures", () => {
-      describe("GET", () => {
-        it("Status 200: should successfully connect to endpoint", () => {
+  describe('/api', () => {
+    describe('/treasures', () => {
+      describe('GET', () => {
+        it('Status 200: should successfully connect to endpoint', () => {
           return request(app)
-            .get("/api/treasures")
+            .get('/api/treasures')
             .expect(200);
         });
-        it("Status 200: should return an array of treasures", () => {
+        it('Status 200: should return an array of treasures', () => {
           return request(app)
-            .get("/api/treasures")
+            .get('/api/treasures')
             .expect(200)
             .then(({ body }) => {
-              expect(body.treasures).to.be.an("array");
-              expect(body.treasures[0]).to.be.an("object");
+              expect(body.treasures).to.be.an('array');
+              expect(body.treasures[0]).to.be.an('object');
             });
         });
-        it("Status 200: should contain necessary keys", () => {
+        it('Status 200: should contain necessary keys', () => {
           return request(app)
-            .get("/api/treasures")
+            .get('/api/treasures')
             .expect(200)
             .then(({ body }) => {
               expect(body.treasures[0]).to.contain.keys(
-                "treasure_id",
-                "treasure_name",
-                "colour",
-                "age",
-                "cost_at_auction"
+                'treasure_id',
+                'treasure_name',
+                'colour',
+                'age',
+                'cost_at_auction'
               );
             });
         });
-        it("Status 200: should NOT have a shop_id key, and instead, a shop_name key", () => {
+        it('Status 200: should NOT have a shop_id key, and instead, a shop_name key', () => {
           return request(app)
-            .get("/api/treasures")
+            .get('/api/treasures')
             .expect(200)
             .then(({ body }) => {
-              expect(body.treasures[0]).to.not.contain.key("shop_id");
-              expect(body.treasures[0]).to.contain.key("shop_name");
+              expect(body.treasures[0]).to.not.contain.key('shop_id');
+              expect(body.treasures[0]).to.contain.key('shop_name');
             });
         });
-        it("Status 200: should sort by auction cost ASC by default", () => {
+        it('Status 200: should sort by auction cost ASC by default', () => {
           return request(app)
-            .get("/api/treasures")
+            .get('/api/treasures')
             .expect(200)
             .then(({ body }) => {
-              expect(body.treasures).to.be.sortedBy("cost_at_auction");
+              expect(body.treasures).to.be.sortedBy('cost_at_auction');
             });
         });
-        it("Status 200: should accept a user-provided sort-key", () => {
+        it('Status 200: should accept a user-provided sort-key', () => {
           return request(app)
-            .get("/api/treasures?sort_by=age")
+            .get('/api/treasures?sort_by=age')
             .expect(200)
             .then(({ body }) => {
-              expect(body.treasures).to.be.sortedBy("age");
+              expect(body.treasures).to.be.sortedBy('age');
             });
         });
-        it("Status 200: should be able to pick asc or desc", () => {
+        it('Status 200: should be able to pick asc or desc', () => {
           return request(app)
-            .get("/api/treasures?order_by=desc")
+            .get('/api/treasures?order_by=desc')
             .expect(200)
             .then(({ body }) => {
-              expect(body.treasures).to.be.sortedBy("cost_at_auction", {
+              expect(body.treasures).to.be.sortedBy('cost_at_auction', {
                 descending: true
               });
             });
         });
-        it("Status 200: should order by ascending even when given invalid order", () => {
+        it('Status 200: should order by ascending even when given invalid order', () => {
           return request(app)
-            .get("/api/treasures?order_by=cats")
+            .get('/api/treasures?order_by=cats')
             .expect(200)
             .then(({ body }) => {
-              expect(body.treasures).to.be.sortedBy("cost_at_auction");
+              expect(body.treasures).to.be.sortedBy('cost_at_auction');
             });
         });
-        it("Status 404: should return column not found for invalid sort", () => {
+        it('Status 404: should return column not found for invalid sort', () => {
           return request(app)
-            .get("/api/treasures?sort_by=weight")
+            .get('/api/treasures?sort_by=weight')
             .expect(404)
             .then(({ body }) => {
-              expect(body.msg).to.equal("column not found");
+              expect(body.msg).to.equal('column not found');
+            });
+        });
+      });
+      describe('POST', () => {
+        const treasure = {
+          treasure_name: 'Diamond',
+          colour: 'Clear',
+          age: 134,
+          cost_at_auction: 1243.68,
+          shop_id: 1
+        };
+        it('Status 201: should successfully connect to endpoint', () => {
+          return request(app)
+            .post('/api/treasures')
+            .send(treasure)
+            .expect(201);
+        });
+        it('Status 201: should return the posted object with an appended id', () => {
+          return request(app)
+            .post('/api/treasures')
+            .send(treasure)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body.treasure).to.eql({
+                treasure_id: 28,
+                treasure_name: 'Diamond',
+                colour: 'Clear',
+                age: 134,
+                cost_at_auction: '1243.68',
+                shop_id: 1
+              });
+            });
+        });
+      });
+      describe('PATCH', () => {
+        const patchData = { cost_at_auction: 20.45 };
+        it('Status 200: should successfully find an existing treasure', () => {
+          return request(app)
+            .patch('/api/treasures/4')
+            .send(patchData)
+            .expect(200);
+        });
+        it('Status 200: should update price of given treasure to 20.45', () => {
+          return request(app)
+            .patch('/api/treasures/2')
+            .send(patchData)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.treasure).to.eql({
+                treasure_id: 2,
+                treasure_name: 'treasure-d',
+                colour: 'azure',
+                age: 100,
+                cost_at_auction: '20.45',
+                shop_id: 2
+              });
             });
         });
       });

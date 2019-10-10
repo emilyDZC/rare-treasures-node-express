@@ -5,22 +5,22 @@ const dbconfig = {
     client: 'pg',
     connection: {
       database: 'mitchs_rare_treasures',
-      username: 'emilychaplais',
+      username: 'shubwub',
       password: 'password'
     },
     seeds: {
-      directory: './db'
+      directory: './db/seeds'
     }
   },
   test: {
     client: 'pg',
     connection: {
       database: 'mitchs_rare_treasures_test',
-      username: 'emilychaplais',
+      username: 'shubwub',
       password: 'password'
     },
     seeds: {
-      directory: './db'
+      directory: './db/seeds'
     }
   }
 };

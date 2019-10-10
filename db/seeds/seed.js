@@ -1,5 +1,5 @@
-const data = require('./data');
-const { mapItems } = require('../utils/map-items');
+const data = require('../data');
+const { mapItems } = require('../../utils/map-items');
 
 exports.seed = function(connection, Promise) {
   return connection

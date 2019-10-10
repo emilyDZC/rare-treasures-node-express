@@ -21,6 +21,26 @@ function fetchTreasureData({ sort_by, order_by }) {
         return treasure;
       });
     });
-}   
+}
 
-module.exports = { fetchTreasureData };
+function insertTreasure(body) {
+  return connection
+    .insert(body)
+    .into('treasures')
+    .returning('*')
+    .then(([treasure]) => {
+      return treasure;
+    });
+}
+
+function updateTreasure(id, body) {
+  return connection('treasures')
+    .where('treasure_id', '=', id)
+    .update(body)
+    .returning('*')
+    .then(([treasure]) => {
+      return treasure;
+    });
+}
+
+module.exports = { fetchTreasureData, insertTreasure, updateTreasure };
