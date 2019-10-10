@@ -1,5 +1,12 @@
-const { expect } = require('chai');
+process.env.NODE_ENV = 'test';
+
+const chai = require('chai');
+const { expect } = chai;
 const { mapItems } = require('../utils/map-items');
+const request = require('supertest');
+const { app } = require('../app');
+const chai_sorted = require('chai-sorted');
+chai.use(chai_sorted);
 
 describe('util functions', () => {
   describe('mapItems', () => {
@@ -11,7 +18,9 @@ describe('util functions', () => {
         { shop_name: 'shop-b', owner: 'firstname-b', slogan: 'slogan-b' }
       ];
       const ownerData = [{ owner_id: '1', forename: 'firstname-b' }];
-      const output = [{ shop_name: 'shop-b', slogan: 'slogan-b', owner_id: '1' }];
+      const output = [
+        { shop_name: 'shop-b', slogan: 'slogan-b', owner_id: '1' }
+      ];
       expect(
         mapItems(ownerData, shopData, 'owner_id', 'forename', 'owner')
       ).to.eql(output);
@@ -76,8 +85,7 @@ describe('util functions', () => {
           treasure_name: 'treasure-c',
           shop: 'shop-c'
         }
-      ]
-      );
+      ]);
     });
   });
 });
@@ -85,8 +93,68 @@ describe('endpoints', () => {
   describe('/api', () => {
     describe('/treasures', () => {
       describe('GET', () => {
-        it('should successfuly connect to endpoint', () => {
-          
+        it('Status 200: should successfully connect to endpoint', () => {
+          return request(app)
+            .get('/api/treasures')
+            .expect(200);
+        });
+        it('Status 200: should return an array of treasures', () => {
+          return request(app)
+            .get('/api/treasures')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.treasures).to.be.an('array');
+              expect(body.treasures[0]).to.be.an('object');
+            });
+        });
+        it('Status 200: should contain necessary keys', () => {
+          return request(app)
+            .get('/api/treasures')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.treasures[0]).to.contain.keys(
+                'treasure_id',
+                'treasure_name',
+                'colour',
+                'age',
+                'cost_at_auction'
+              );
+            });
+        });
+        it('Status 200: should NOT have a shop_id key, and instead, a shop_name key', () => {
+          return request(app)
+            .get('/api/treasures')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.treasures[0]).to.not.contain.key('shop_id');
+              expect(body.treasures[0]).to.contain.key('shop_name');
+            });
+        });
+        it('Status 200: should sort by auction cost ASC by default', () => {
+          return request(app)
+            .get('/api/treasures')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.treasures).to.be.sortedBy('cost_at_auction');
+            });
+        });
+        it('Status 200: should accept a user-provided sort-key', () => {
+          return request(app)
+            .get('/api/treasures?sort_by=age')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.treasures).to.be.sortedBy('age');
+            });
+        });
+        it('Status 200: should be able to pick asc or desc', () => {
+          return request(app)
+            .get('/api/treasures?order_by=desc')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.treasures).to.be.sortedBy('cost_at_auction', {
+                descending: true
+              });
+            });
         });
       });
     });
