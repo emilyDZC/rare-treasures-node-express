@@ -21,6 +21,6 @@ function fetchTreasureData({ sort_by, order_by }) {
         return treasure;
       });
     });
-}
+}   
 
 module.exports = { fetchTreasureData };
