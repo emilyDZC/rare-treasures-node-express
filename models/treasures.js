@@ -1,7 +1,6 @@
 const { connection } = require('../db/connection');
 
-function fetchTreasureData({ sort_by, order_by }) {
-  const sort = sort_by ? sort_by : 'cost_at_auction';
+function fetchTreasureData({ sort_by = 'cost_at_auction', order_by }) {
   const order = { asc: 'asc', desc: 'desc' };
   return connection
     .select(
@@ -14,7 +13,7 @@ function fetchTreasureData({ sort_by, order_by }) {
     )
     .from('treasures')
     .join('shops', 'treasures.treasure_id', '=', 'shops.shop_id')
-    .orderBy(sort, order[order_by])
+    .orderBy(sort_by, order[order_by])
     .then(result => {
       return result.map(treasure => {
         treasure.cost_at_auction = Number(treasure.cost_at_auction);
