@@ -5,7 +5,7 @@ const dbconfig = {
     client: 'pg',
     connection: {
       database: 'mitchs_rare_treasures',
-      username: 'shubwub',
+      username: 'emilychaplais',
       password: 'password'
     },
     seeds: {
@@ -16,7 +16,7 @@ const dbconfig = {
     client: 'pg',
     connection: {
       database: 'mitchs_rare_treasures_test',
-      username: 'shubwub',
+      username: 'emilychaplais',
       password: 'password'
     },
     seeds: {

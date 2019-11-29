@@ -1,8 +1,9 @@
 const {
   fetchTreasureData,
   insertTreasure,
-  updateTreasure
-} = require('../models/treasures');
+  updateTreasure,
+  removeTreasure
+} = require("../models/treasures");
 
 function getTreasures(req, res, next) {
   fetchTreasureData(req.query)
@@ -28,4 +29,14 @@ function patchTreasure(req, res, next) {
     .catch(next);
 }
 
-module.exports = { getTreasures, postTreasure, patchTreasure };
+function deleteTreasure(req, res, next) {
+  const { id } = req.params;
+  removeTreasure(id)
+    .then(num => {
+      if (!num) next({ code: "noTreasure" });
+      else res.status(200).send({ msg: "Treasure successfully deleted" });
+    })
+    .catch(next);
+}
+
+module.exports = { getTreasures, postTreasure, patchTreasure, deleteTreasure };

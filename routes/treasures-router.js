@@ -1,21 +1,23 @@
-const express = require('express');
+const express = require("express");
 const treasuresRouter = express.Router();
 const {
   getTreasures,
   postTreasure,
-  patchTreasure
-} = require('../controllers/treasures');
-const { notAllowed } = require('../errors');
+  patchTreasure,
+  deleteTreasure
+} = require("../controllers/treasures");
+const { notAllowed } = require("../errors");
 
 treasuresRouter
-  .route('/')
+  .route("/")
   .get(getTreasures)
   .post(postTreasure)
   .all(notAllowed);
 
 treasuresRouter
-  .route('/:id')
+  .route("/:id")
   .patch(patchTreasure)
+  .delete(deleteTreasure)
   .all(notAllowed);
 
 module.exports = { treasuresRouter };

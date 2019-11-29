@@ -31,8 +31,5 @@ exports.seed = function(connection, Promise) {
         .insert(treasures)
         .into('treasures')
         .returning('*');
-    })
-    .then(treasures => {
-      // console.log(treasures);
     });
 };
